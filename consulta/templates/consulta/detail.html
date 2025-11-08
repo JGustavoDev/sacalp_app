@@ -1,0 +1,145 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Detalhes da Consulta{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Consulta de {{ anamnese.cliente.nome }}</h2>
+        <div>
+            <a href="{% url 'consulta:editar_anamnese' anamnese.pk %}" class="btn btn-warning">
+                <i class="fas fa-edit me-2"></i>Editar
+            </a>
+            <a href="{% url 'cadastro:detalhe_cliente' anamnese.cliente.pk %}" class="btn btn-secondary">
+                <i class="fas fa-user me-2"></i>Ver Cliente
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informações Gerais</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Data da Consulta:</dt>
+                        <dd class="col-sm-8">{{ anamnese.data_consulta|date:"d/m/Y H:i" }}</dd>
+                        
+                        <dt class="col-sm-4">Queixa Principal:</dt>
+                        <dd class="col-sm-8">{{ anamnese.queixa_principal }}</dd>
+                        
+                        <dt class="col-sm-4">Tempo do Problema:</dt>
+                        <dd class="col-sm-8">{{ anamnese.tempo_problema }}</dd>
+                        
+                        <dt class="col-sm-4">Estado do Problema:</dt>
+                        <dd class="col-sm-8">{{ anamnese.get_estado_problema_display }}</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Alterações Capilares</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Alterações no Couro Cabeludo:</h6>
+                    <ul class="list-unstyled">
+                        {% if anamnese.dor %}<li><i class="fas fa-check text-success me-2"></i>Dor</li>{% endif %}
+                        {% if anamnese.coceira %}<li><i class="fas fa-check text-success me-2"></i>Coceira</li>{% endif %}
+                        {% if anamnese.ardor %}<li><i class="fas fa-check text-success me-2"></i>Ardor</li>{% endif %}
+                        {% if anamnese.crostas %}<li><i class="fas fa-check text-success me-2"></i>Crostas</li>{% endif %}
+                        {% if anamnese.odor %}<li><i class="fas fa-check text-success me-2"></i>Odor</li>{% endif %}
+                        {% if anamnese.inflamacao %}<li><i class="fas fa-check text-success me-2"></i>Inflamação</li>{% endif %}
+                        {% if anamnese.feridas %}<li><i class="fas fa-check text-success me-2"></i>Feridas</li>{% endif %}
+                        {% if anamnese.caspa %}<li><i class="fas fa-check text-success me-2"></i>Caspa</li>{% endif %}
+                        {% if anamnese.oleosidade %}<li><i class="fas fa-check text-success me-2"></i>Oleosidade</li>{% endif %}
+                        {% if anamnese.descamacao %}<li><i class="fas fa-check text-success me-2"></i>Descamação</li>{% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Histórico Médico</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        {% if anamnese.outras_crises == 'S' %}
+                            <dt class="col-sm-4">Outras Crises:</dt>
+                            <dd class="col-sm-8">{{ anamnese.data_outras_crises }}</dd>
+                        {% endif %}
+                        
+                        {% if anamnese.historico_doencas %}
+                            <dt class="col-sm-4">Histórico de Doenças:</dt>
+                            <dd class="col-sm-8">{{ anamnese.historico_doencas }}</dd>
+                        {% endif %}
+                        
+                        {% if anamnese.enfermidade_atual == 'S' %}
+                            <dt class="col-sm-4">Enfermidades Atuais:</dt>
+                            <dd class="col-sm-8">{{ anamnese.enfermidades }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Exame Físico</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Volume Uniforme:</dt>
+                        <dd class="col-sm-8">{{ anamnese.get_volume_uniforme_display }}</dd>
+                        
+                        <dt class="col-sm-4">Comprimento Uniforme:</dt>
+                        <dd class="col-sm-8">{{ anamnese.get_comprimento_uniforme_display }}</dd>
+                        
+                        <dt class="col-sm-4">Textura dos Cabelos:</dt>
+                        <dd class="col-sm-8">{{ anamnese.get_textura_cabelos_display }}</dd>
+                        
+                        {% if anamnese.estado_pontas == 'Q' %}
+                            <dt class="col-sm-4">Região Danificada:</dt>
+                            <dd class="col-sm-8">{{ anamnese.regiao_danificada }}</dd>
+                        {% endif %}
+                    </dl>
+
+                    {% if anamnese.tem_falhas or anamnese.tem_entradas or anamnese.tem_retracoes %}
+                        <h6 class="mt-3">Alterações:</h6>
+                        <ul class="list-unstyled">
+                            {% if anamnese.tem_falhas %}<li><i class="fas fa-check text-success me-2"></i>Falhas</li>{% endif %}
+                            {% if anamnese.tem_entradas %}<li><i class="fas fa-check text-success me-2"></i>Entradas</li>{% endif %}
+                            {% if anamnese.tem_retracoes %}<li><i class="fas fa-check text-success me-2"></i>Retrações</li>{% endif %}
+                        </ul>
+                        {% if anamnese.regiao_afetada %}
+                            <p><strong>Região afetada:</strong> {{ anamnese.regiao_afetada }}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if anamnese.observacoes or anamnese.alteracao_encontrada %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Observações e Alterações</h5>
+            </div>
+            <div class="card-body">
+                {% if anamnese.observacoes %}
+                    <h6>Observações Complementares:</h6>
+                    <p>{{ anamnese.observacoes }}</p>
+                {% endif %}
+                
+                {% if anamnese.alteracao_encontrada %}
+                    <h6>Alteração Encontrada:</h6>
+                    <p>{{ anamnese.alteracao_encontrada }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

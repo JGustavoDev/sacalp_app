@@ -1,0 +1,68 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Consultas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Consultas</h2>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            {% if anamneses %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Data da Consulta</th>
+                                <th>Queixa Principal</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for anamnese in anamneses %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'cadastro:detalhe_cliente' anamnese.cliente.pk %}" class="text-decoration-none">
+                                            {{ anamnese.cliente.nome }}
+                                        </a>
+                                    </td>
+                                    <td>{{ anamnese.data_consulta|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ anamnese.queixa_principal|truncatewords:10 }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'consulta:detalhe_anamnese' anamnese.pk %}" 
+                                               class="btn btn-sm btn-info" 
+                                               title="Ver detalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'consulta:editar_anamnese' anamnese.pk %}" 
+                                               class="btn btn-sm btn-warning" 
+                                               title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted text-center my-4">Nenhuma consulta registrada.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Confirmar Exclusão{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Confirmar Exclusão</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Tem certeza que deseja excluir o cliente "{{ object.nome }}"?</h5>
+            
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash me-2"></i>Confirmar Exclusão
+                </button>
+                <a href="{% url 'cadastro:listar_clientes' %}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
