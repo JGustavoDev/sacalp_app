@@ -1,0 +1,449 @@
+{% extends "dashboard/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ titulo }} - {{ cliente.nome }}</h2>
+        <a href="{% url 'cadastro:detalhe_cliente' cliente.pk %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar para Cliente
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- Queixa principal e histórico -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Queixa Principal e Histórico</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="{{ form.queixa_principal.id_for_label }}" class="form-label">{{ form.queixa_principal.label }}</label>
+                        {{ form.queixa_principal }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.estado_problema.label }}</label>
+                        {{ form.estado_problema }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.tempo_problema.label }}</label>
+                        {{ form.tempo_problema }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.afeta_outras_partes.label }}</label>
+                        {{ form.afeta_outras_partes }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.afeta_quais_partes.label }}</label>
+                        {{ form.afeta_quais_partes }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alterações capilares -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Alterações Capilares</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            {{ form.cabelo_mais_quebradiço }}
+                            <label class="form-check-label" for="{{ form.cabelo_mais_quebradiço.id_for_label }}">{{ form.cabelo_mais_quebradiço.label }}</label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <h6>Alterações no Couro Cabeludo</h6>
+                <div class="row">
+                    {% for field in form %}
+                        {% if field.name in scalp_fields %}
+                            <div class="col-md-3 mb-2">
+                                <div class="form-check">
+                                    {{ field }}
+                                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Histórico Médico e Medicamentos -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Histórico Médico</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.outras_crises.label }}</label>
+                        {{ form.outras_crises }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.data_outras_crises.label }}</label>
+                        {{ form.data_outras_crises }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">{{ form.historico_doencas.label }}</label>
+                        {{ form.historico_doencas }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.enfermidade_atual.label }}</label>
+                        {{ form.enfermidade_atual }}
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label">{{ form.enfermidades.label }}</label>
+                        {{ form.enfermidades }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.problema_endocrino.label }}</label>
+                        {{ form.problema_endocrino }}
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label">{{ form.quais_endocrinos.label }}</label>
+                        {{ form.quais_endocrinos }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.cardiaco.label }}</label>
+                        {{ form.cardiaco }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.marcapasso.label }}</label>
+                        {{ form.marcapasso }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.medicamentos.label }}</label>
+                        {{ form.medicamentos }}
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label">{{ form.quais_medicamentos.label }}</label>
+                        {{ form.quais_medicamentos }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hábitos e Fatores Recentes -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Hábitos e Fatores Recentes</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">{{ form.frequencia_lavagem.label }}</label>
+                        {{ form.frequencia_lavagem }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">{{ form.produtos_uso.label }}</label>
+                        {{ form.produtos_uso }}
+                    </div>
+
+                    <div class="col-md-2 form-check">
+                        {{ form.fez_dieta }} <label class="form-check-label">{{ form.fez_dieta.label }}</label>
+                    </div>
+                    <div class="col-md-2 form-check">
+                        {{ form.emagreceu }} <label class="form-check-label">{{ form.emagreceu.label }}</label>
+                    </div>
+                    <div class="col-md-2 form-check">
+                        {{ form.engordou }} <label class="form-check-label">{{ form.engordou.label }}</label>
+                    </div>
+                    <div class="col-md-3 form-check">
+                        {{ form.crise_emocional }} <label class="form-check-label">{{ form.crise_emocional.label }}</label>
+                    </div>
+                    <div class="col-md-3 form-check">
+                        {{ form.amamentou }} <label class="form-check-label">{{ form.amamentou.label }}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alergias e Reprodutivas -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Alergias e História Reprodutiva</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.alergia.label }}</label>
+                        {{ form.alergia }}
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label">{{ form.quais_alergias.label }}</label>
+                        {{ form.quais_alergias }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.tem_filhos.label }}</label>
+                        {{ form.tem_filhos }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.quantidade_filhos.label }}</label>
+                        {{ form.quantidade_filhos }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.data_ultima_gravidez.label }}</label>
+                        {{ form.data_ultima_gravidez }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.gravidez_piorou.label }}</label>
+                        {{ form.gravidez_piorou }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.alteracao_menstruacao.label }}</label>
+                        {{ form.alteracao_menstruacao }}
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label">{{ form.qual_alteracao.label }}</label>
+                        {{ form.qual_alteracao }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dieta e Histórico Familiar -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Dieta e Histórico Familiar</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.come_carne.label }}</label>
+                        {{ form.come_carne }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.familiar_mesmo_problema.label }}</label>
+                        {{ form.familiar_mesmo_problema }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.familiar_calvicie.label }}</label>
+                        {{ form.familiar_calvicie }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuidados com os cabelos -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Cuidados com os cabelos</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.procedimento_quimico.label }}</label>
+                        {{ form.procedimento_quimico }}
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-label">{{ form.quais_procedimentos.label }}</label>
+                        {{ form.quais_procedimentos }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">{{ form.frequencia_procedimentos.label }}</label>
+                        {{ form.frequencia_procedimentos }}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Uso de acessórios / práticas</label>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="form-check">
+                                {{ form.usa_gel }} <label class="form-check-label">{{ form.usa_gel.label }}</label>
+                            </div>
+                            <div class="form-check">
+                                {{ form.usa_bone }} <label class="form-check-label">{{ form.usa_bone.label }}</label>
+                            </div>
+                            <div class="form-check">
+                                {{ form.usa_chapeu }} <label class="form-check-label">{{ form.usa_chapeu.label }}</label>
+                            </div>
+                            <div class="form-check">
+                                {{ form.usa_penteados }} <label class="form-check-label">{{ form.usa_penteados.label }}</label>
+                            </div>
+                            <div class="form-check">
+                                {{ form.usa_escovas }} <label class="form-check-label">{{ form.usa_escovas.label }}</label>
+                            </div>
+                            <div class="form-check">
+                                {{ form.usa_capacetes }} <label class="form-check-label">{{ form.usa_capacetes.label }}</label>
+                            </div>
+                            <div class="form-check">
+                                {{ form.usa_chapas }} <label class="form-check-label">{{ form.usa_chapas.label }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exame Físico -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Exame Físico</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.volume_uniforme.label }}</label>
+                        {{ form.volume_uniforme }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.comprimento_uniforme.label }}</label>
+                        {{ form.comprimento_uniforme }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.textura_cabelos.label }}</label>
+                        {{ form.textura_cabelos }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ form.estado_pontas.label }}</label>
+                        {{ form.estado_pontas }}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">{{ form.regiao_danificada.label }}</label>
+                        {{ form.regiao_danificada }}
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <h6>Condicões do couro cabeludo</h6>
+                        <div class="d-flex flex-wrap gap-3">
+                            {{ form.couro_oleosidade }} <label class="form-check-label">{{ form.couro_oleosidade.label }}</label>
+                            {{ form.couro_descamacao }} <label class="form-check-label">{{ form.couro_descamacao.label }}</label>
+                            {{ form.couro_prurido }} <label class="form-check-label">{{ form.couro_prurido.label }}</label>
+                            {{ form.couro_vermelhidao }} <label class="form-check-label">{{ form.couro_vermelhidao.label }}</label>
+                            {{ form.couro_manchas }} <label class="form-check-label">{{ form.couro_manchas.label }}</label>
+                            {{ form.couro_caspa }} <label class="form-check-label">{{ form.couro_caspa.label }}</label>
+                            {{ form.couro_odor }} <label class="form-check-label">{{ form.couro_odor.label }}</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="form-label">{{ form.couro_outros.label }}</label>
+                            {{ form.couro_outros }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <h6>Condições dos fios</h6>
+                        <div class="d-flex flex-wrap gap-3">
+                            {{ form.fios_nodulos }} <label class="form-check-label">{{ form.fios_nodulos.label }}</label>
+                            {{ form.fios_triconodose }} <label class="form-check-label">{{ form.fios_triconodose.label }}</label>
+                            {{ form.fios_tricorrexinodosa }} <label class="form-check-label">{{ form.fios_tricorrexinodosa.label }}</label>
+                            {{ form.fios_tricoptilose }} <label class="form-check-label">{{ form.fios_tricoptilose.label }}</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="form-label">{{ form.fios_outros.label }}</label>
+                            {{ form.fios_outros }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <h6>Presença de falhas/entradas/retrações</h6>
+                        <div class="d-flex flex-wrap gap-3">
+                            {{ form.tem_falhas }} <label class="form-check-label">{{ form.tem_falhas.label }}</label>
+                            {{ form.tem_entradas }} <label class="form-check-label">{{ form.tem_entradas.label }}</label>
+                            {{ form.tem_retracoes }} <label class="form-check-label">{{ form.tem_retracoes.label }}</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="form-label">{{ form.regiao_afetada.label }}</label>
+                            {{ form.regiao_afetada }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <h6>Alopecia (se aplicável)</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">{{ form.alopecia_regiao }}<label class="form-label">{{ form.alopecia_regiao.label }}</label></div>
+                            <div class="col-md-2">{{ form.alopecia_num_lesoes }}<label class="form-label">{{ form.alopecia_num_lesoes.label }}</label></div>
+                            <div class="col-md-3">{{ form.alopecia_formato }}<label class="form-label">{{ form.alopecia_formato.label }}</label></div>
+                            <div class="col-md-3">{{ form.alopecia_tamanho }}<label class="form-label">{{ form.alopecia_tamanho.label }}</label></div>
+                            <div class="col-12 mt-2">{{ form.alopecia_superficie }}<label class="form-label">{{ form.alopecia_superficie.label }}</label></div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <label class="form-label">{{ form.reposicao_fios.label }}</label>
+                        {{ form.reposicao_fios }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Observações e alteração encontrada -->
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="card-title mb-0">Observações</h5></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">{{ form.observacoes.label }}</label>
+                        {{ form.observacoes }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">{{ form.alteracao_encontrada.label }}</label>
+                        {{ form.alteracao_encontrada }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Salvar Consulta</button>
+            <a href="{% url 'cadastro:detalhe_cliente' cliente.pk %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleFields = {
+        'afeta_outras_partes': ['afeta_quais_partes'],
+        'outras_crises': ['data_outras_crises'],
+        'enfermidade_atual': ['enfermidades'],
+        'medicamentos': ['quais_medicamentos'],
+        'alergia': ['quais_alergias'],
+        'procedimento_quimico': ['quais_procedimentos','frequencia_procedimentos'],
+        'tem_filhos': ['quantidade_filhos'],
+        'gravidez_piorou': [],
+        'alteracao_menstruacao': ['qual_alteracao']
+    };
+
+    function toggle() {
+        for (const [trigger, targets] of Object.entries(toggleFields)) {
+            const els = document.getElementsByName(trigger);
+            if (!els || els.length === 0) continue;
+            const value = els[0].value || (els[0].checked ? (els[0].value || 'S') : 'N');
+            const enabled = value === 'S';
+            targets.forEach(target => {
+                const t = document.getElementsByName(target)[0];
+                if (!t) return;
+                t.disabled = !enabled;
+                if (t.closest) {
+                    const mb = t.closest('.mb-3') || t.closest('.col-md-3') || t.closest('.col-md-9') || t.closest('.col-12');
+                    if (mb) mb.style.display = enabled ? 'block' : 'none';
+                }
+            });
+        }
+    }
+
+    // Attach change listeners
+    for (const name of Object.keys(toggleFields)) {
+        const els = document.getElementsByName(name);
+        if (!els || els.length === 0) continue;
+        els.forEach(el => el.addEventListener('change', toggle));
+    }
+    toggle();
+});
+</script>
+{% endblock %}
+{% endblock %}
