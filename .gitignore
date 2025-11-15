@@ -2,10 +2,75 @@
 __pycache__/
 *.py[cod]
 *$py.class
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
 *.so
+
+# Distribution / packaging
 .Python
+env/
+venv/
+ENV/
+.env
 build/
 develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+*.egg
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
+staticfiles/
+collectstatic/
+
+# Migrations - sometimes useful to keep but often not
+*/migrations/*
+!*/migrations/__init__.py
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# OneDrive temporary files
+~$*
+.~lock.*
+
+# macOS
+.Spotlight-V100
+.Trashes
+
+# Logs
+*.so
+
+# Coverage
+.Python
+build/
+
+# pytest
+develop-eggs/
+
 dist/
 downloads/
 eggs/
